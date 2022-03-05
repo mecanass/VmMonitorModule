@@ -12,7 +12,7 @@ function Show-Menu {
     Clear-Host
     Write-Host "================ $Title ================"
     
-    Write-Host "1: Afficher la consomation de la mémoire vive."
+    Write-Host "1: Afficher la consomation du CPU."
     Write-Host "2: Option 2."
     Write-Host "3: Option 3."
     Write-Host "Q: Quitter."
@@ -20,6 +20,16 @@ function Show-Menu {
 
 function Memoire-Vive{
 	#TODO écrire la fonction qui affiche en permanance l'état de la mémoire vive des VM
+	#$allvms = Get-AzVM
+	#$allvms
+	Get-AzVM | Format-List -Property Name, ResourceGroupName
+	Start-Sleep -Seconds 12
+
+	$vmname = Read-Host "Entrez le nom de la VM parmi ceux listé plus haut: "
+	$vmaz = Get-AzVM -VMName $vmname
+	(Get-AzureRmMetric -ResourceId $vmaz.id -TimeGrain 00:01:00 -DetailedOutput -MetricNames "Percentage CPU").Data
+	pause
+	Start-Menu
 }
 
 
@@ -32,6 +42,7 @@ function Start-Menu{
 		{
 		'1' {
 		Write-Host "vous avez choisi option #1"
+		Memoire-Vive
 		} '2' {
 		Write-Host "vous avez choisi option #2"
 		} '3' {
